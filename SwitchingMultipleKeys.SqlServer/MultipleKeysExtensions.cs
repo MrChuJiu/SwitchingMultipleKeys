@@ -7,11 +7,17 @@ namespace SwitchingMultipleKeys.SqlServer
         public static void AddMultipleKeysSqlServer(this IServiceCollection services, Action<MultipleKeysOptions> optionsAction = null)
         {
 
-            services.AddSingleton<SqlServerMultipleKeyContext>();
+            //services.AddSingleton<SqlServerMultipleKeyContext>();
             services.AddSingleton(typeof(IMultipleKeysProvider<>), typeof(SqlServerMultipleKeysProvider<>));
 
             services.Configure(optionsAction);
         }
 
     }
+
+    //public class SqlServerMultipleKeysOptions : MultipleKeysOptions
+    //{ 
+
+
+    //}
 }
