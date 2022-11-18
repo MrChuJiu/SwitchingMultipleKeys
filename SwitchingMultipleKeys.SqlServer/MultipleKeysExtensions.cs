@@ -15,9 +15,5 @@ namespace SwitchingMultipleKeys.SqlServer
 
     }
 
-    //public class SqlServerMultipleKeysOptions : MultipleKeysOptions
-    //{ 
 
-
-    //}
 }

@@ -5,6 +5,11 @@ namespace SwitchingMultipleKeys.SqlServer
 {
     public class SqlServerMultipleKeyContext : DbContext
     {
+
+        public SqlServerMultipleKeyContext(DbContextOptions<SqlServerMultipleKeyContext> options) : base(options)
+        {
+
+        }
         public DbSet<SqlServerMultipleKeyInfo> MultipleKeyInfo { get; set; }
 
 
