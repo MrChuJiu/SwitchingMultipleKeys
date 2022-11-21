@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using SwitchingMultipleKeys;
 using SwitchingMultipleKeys.SqlServer;
 using Test_MultipleKets;
@@ -6,6 +7,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddDbContext<SqlServerMultipleKeyContext>(o => o.UseSqlServer(
+                @"Server=192.168.31.178; Database=EFQuerying; User=sa; Password=shinetech:123; Connection Timeout=600;MultipleActiveResultSets=true;"
+));
 
 builder.Services.AddMultipleKeysSqlServer(options =>
 {
@@ -15,39 +19,35 @@ builder.Services.AddMultipleKeysSqlServer(options =>
 });
 
 
+
+
 var app = builder.Build();
 
-using (var context = new SqlServerMultipleKeyContext())
-{
-    context.Database.EnsureDeleted();
-    context.Database.EnsureCreated();
-}
+using var context = app.Services.GetService<SqlServerMultipleKeyContext>();
+context.Database.EnsureDeleted();
+context.Database.EnsureCreated();
 
-using (var context = new SqlServerMultipleKeyContext())
-{
-    var data = new List<DiMultipleKeyEntity>()
+var data = new List<DiMultipleKeyEntity>()
     {
         new DiMultipleKeyEntity() { KeyId = "a", PassWord = "11111" },
         new DiMultipleKeyEntity() { KeyId = "b", PassWord = "222222222222" },
         new DiMultipleKeyEntity() { KeyId = "c", PassWord = "33333333333333333333" }
     };
 
-    foreach (var item in data)
+foreach (var item in data)
+{
+    var info = new SqlServerMultipleKeyInfo()
     {
-        var info = new SqlServerMultipleKeyInfo()
-        {
-            KeyName = nameof(DiMultipleKeyEntity),
-            Maximum = 40,
-            ResidueDegree = 40,
-            Data = item,
-            CreateTime = DateTime.Now
-        };
-        context.MultipleKeyInfo.Add(info);
-    }
-
-    context.SaveChanges();
+        KeyName = nameof(DiMultipleKeyEntity),
+        Maximum = 40,
+        ResidueDegree = 40,
+        Data = item,
+        CreateTime = DateTime.Now
+    };
+    context.MultipleKeyInfo.Add(info);
 }
 
+context.SaveChanges();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
