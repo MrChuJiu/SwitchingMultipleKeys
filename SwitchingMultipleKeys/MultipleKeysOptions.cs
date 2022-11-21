@@ -16,4 +16,13 @@ namespace SwitchingMultipleKeys
         }
     }
 
+
+    public enum LifeCycle
+    {
+        Day, 
+        Week, 
+        Month, 
+        Year
+    }
+
 }

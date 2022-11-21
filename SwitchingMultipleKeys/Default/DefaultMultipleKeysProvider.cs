@@ -71,7 +71,7 @@ namespace SwitchingMultipleKeys
             {
                 if (!result.ContainsKey(item))
                 {
-                    result[item] = new DefaultMultipleKeyInfo(((MultipleKeyAttribute)item.GetCustomAttributes(false)[2]).Maximum);
+                    result[item] = new DefaultMultipleKeyInfo(((MultipleKeyAttribute)item.GetType().GetCustomAttributes(false).FirstOrDefault(x => x.GetType().FullName == typeof(MultipleKeyAttribute).FullName)).Maximum); 
                 }
                 result[item].Keys = data[item];
             }

@@ -1,4 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+
 
 namespace SwitchingMultipleKeys.SqlServer
 {
@@ -6,13 +10,26 @@ namespace SwitchingMultipleKeys.SqlServer
     {
         public static void AddMultipleKeysSqlServer(this IServiceCollection services, Action<MultipleKeysOptions> optionsAction = null)
         {
-
-            //services.AddSingleton<SqlServerMultipleKeyContext>();
-            services.AddSingleton(typeof(IMultipleKeysProvider<>), typeof(SqlServerMultipleKeysProvider<>));
+            services.AddScoped(typeof(IMultipleKeysProvider<>), typeof(SqlServerMultipleKeysProvider<>));
 
             services.Configure(optionsAction);
+
+            services.AddTransient<IMultipleKeySeedData,SqlServerMultipleKeySeedData>();
         }
 
+        public static IApplicationBuilder UseMultipleKeysSqlServerSeedData(this IApplicationBuilder app)
+        {
+            if (app == null)
+            {
+                throw new ArgumentNullException(nameof(app));
+            }
+
+            var seedData= app.ApplicationServices.GetService<IMultipleKeySeedData>();
+
+            seedData.SeedAsync().Wait();
+            return app;
+
+        }
     }
 
 
