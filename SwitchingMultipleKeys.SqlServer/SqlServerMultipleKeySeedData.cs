@@ -22,19 +22,19 @@ public class SqlServerMultipleKeySeedData : IMultipleKeySeedData
         using var scope = _serviceProvider.CreateScope();
         var context = scope.ServiceProvider.GetService<SqlServerMultipleKeyContext>();
 
-        foreach (var item in Options.Keys)
-        {
-            var maximum = ((MultipleKeyAttribute)item.GetType().GetCustomAttributes(false).FirstOrDefault(x => x.GetType().FullName == typeof(MultipleKeyAttribute).FullName)).Maximum; 
-            var info = new SqlServerMultipleKeyInfo()
-            {
-                KeyName = item.GetType().Name,
-                Maximum = maximum,
-                ResidueDegree = maximum,
-                Data = item,
-                CreateTime = DateTime.Now
-            };
-            context.MultipleKeyInfo.Add(info);
-        }
+        //foreach (var item in Options.Keys)
+        //{
+        //    var maximum = ((MultipleKeyAttribute)item.GetType().GetCustomAttributes(false).FirstOrDefault(x => x.GetType().FullName == typeof(MultipleKeyAttribute).FullName)).Maximum; 
+        //    var info = new SqlServerMultipleKeyInfo()
+        //    {
+        //        KeyName = item.GetType().Name,
+        //        Maximum = maximum,
+        //        ResidueDegree = maximum,
+        //        Data = item,
+        //        CreateTime = DateTime.Now
+        //    };
+        //    context.MultipleKeyInfo.Add(info);
+        //}
         await context.SaveChangesAsync().ConfigureAwait(false);
     }
 }

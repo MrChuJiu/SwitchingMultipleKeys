@@ -2,8 +2,7 @@
 
 namespace Test_MultipleKets
 {
-    [MultipleKey(30)]
-    public class DiMultipleKeyEntity: IMultipleKeyEntity
+    public class DiMultipleKeyEntity: MultipleKeyEntity
     {
         public string KeyId { get; set; }
          

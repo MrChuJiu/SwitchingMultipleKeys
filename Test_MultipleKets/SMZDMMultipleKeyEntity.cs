@@ -2,8 +2,7 @@
 
 namespace Test_MultipleKets
 {
-    [MultipleKey(20)]
-    public class SMZDMMultipleKeyEntity: IMultipleKeyEntity
+    public class SMZDMMultipleKeyEntity: MultipleKeyEntity
     {
         public string KeyId { get; set; }
          

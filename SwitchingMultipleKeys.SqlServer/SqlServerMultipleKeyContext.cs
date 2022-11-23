@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+
 using Newtonsoft.Json;
 
 namespace SwitchingMultipleKeys.SqlServer
@@ -18,15 +19,13 @@ namespace SwitchingMultipleKeys.SqlServer
             var builder = modelBuilder.Entity<SqlServerMultipleKeyInfo>();
 
 
-            builder.Property(e => e.Data)
-           //.HasJsonSerializeConversion();
-           .HasConversion(c => JsonConvert.SerializeObject(c, new JsonSerializerSettings
-           {
-               TypeNameHandling = TypeNameHandling.All
-           }), s => JsonConvert.DeserializeObject<IMultipleKeyEntity>(s, new JsonSerializerSettings
-           {
-               TypeNameHandling = TypeNameHandling.Auto
-           }));
+            builder.Property(e => e.Data).HasConversion(c => JsonConvert.SerializeObject(c, new JsonSerializerSettings
+               {
+                   TypeNameHandling = TypeNameHandling.All
+               }), s => JsonConvert.DeserializeObject<MultipleKeyEntity>(s, new JsonSerializerSettings
+               {
+                   TypeNameHandling = TypeNameHandling.Auto
+               }));
         }
 
 

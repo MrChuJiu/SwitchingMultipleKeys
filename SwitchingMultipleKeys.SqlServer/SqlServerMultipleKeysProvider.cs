@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 
 namespace SwitchingMultipleKeys.SqlServer
 {
-    public class SqlServerMultipleKeysProvider<T> : IMultipleKeysProvider<T> where T : IMultipleKeyEntity
+    public class SqlServerMultipleKeysProvider<T> : IMultipleKeysProvider<T> where T : MultipleKeyEntity
     {
         private static readonly object objLock = new object();
         protected MultipleKeysOptions Options { get; }

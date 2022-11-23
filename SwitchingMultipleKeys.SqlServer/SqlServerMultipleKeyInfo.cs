@@ -16,7 +16,7 @@ namespace SwitchingMultipleKeys.SqlServer
 
         public int ResidueDegree { get; set; }
 
-        public IMultipleKeyEntity Data  { get; set; }
+        public MultipleKeyEntity Data  { get; set; }
 
         public DateTime CreateTime { get; set; }
     }

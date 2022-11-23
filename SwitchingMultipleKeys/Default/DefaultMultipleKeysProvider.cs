@@ -8,10 +8,16 @@ using Microsoft.Extensions.Options;
 
 namespace SwitchingMultipleKeys
 {
-    public class DefaultMultipleKeysProvider<T> : IMultipleKeysProvider<T> where T : IMultipleKeyEntity
+    public class DefaultMultipleKeysProvider<T> : IMultipleKeysProvider<T> where T : MultipleKeyEntity
     {
-        protected IDictionary<Type, DefaultMultipleKeyInfo> MultipleKeysDefinitions =>  _lazyMultipleKeysDefinitions.Value;
-        private readonly Lazy<Dictionary<Type, DefaultMultipleKeyInfo>> _lazyMultipleKeysDefinitions;
+        protected IDictionary<Type, List<MultipleKeyEntity>> MultipleKeysDefinitions =>  _lazyMultipleKeysDefinitions.Value;
+        private readonly Lazy<Dictionary<Type, List<MultipleKeyEntity>>> _lazyMultipleKeysDefinitions;
+
+
+
+        protected IDictionary<Type, List<MultipleKeyEntity>> MultipleKeysRecordDefinitions =
+            new Dictionary<Type, List<MultipleKeyEntity>>();
+
 
         private static readonly object objLock = new object();
 
@@ -21,59 +27,54 @@ namespace SwitchingMultipleKeys
         {
             Options = options.Value;
 
-            _lazyMultipleKeysDefinitions = new Lazy<Dictionary<Type, DefaultMultipleKeyInfo>>(
+            _lazyMultipleKeysDefinitions = new Lazy<Dictionary<Type, List<MultipleKeyEntity>>>(
                 InitializationMultipleKeysDefinitions,
                 isThreadSafe: true
             );
+
         }
 
         public T GetMultipleKeys()
         {
             lock (objLock)
             {
-                if (MultipleKeysDefinitions[typeof(T)].CurrentLocation >=  MultipleKeysDefinitions[typeof(T)].Maximum)
-                {
-                    MultipleKeysDefinitions[typeof(T)].CurrentKeysIndex += 1;
-                    MultipleKeysDefinitions[typeof(T)].CurrentLocation = 0;
-                }
+                var multipleKeyInfo = MultipleKeysDefinitions[typeof(T)].Where(x=> (x.ExpirationDate > DateTime.Now.Date || x.ExpirationDate == null) && x.ResidueDegree > 0).OrderBy(x=>x.ResidueDegree).ThenBy(x=>x.LifeCycle).FirstOrDefault();
 
-                if (MultipleKeysDefinitions[typeof(T)].CurrentKeysIndex == MultipleKeysDefinitions[typeof(T)].Keys.Count)
+                if (multipleKeyInfo == null)
                 {
+                    if (MultipleKeysDefinitions[typeof(T)].Any(x => x.ExpirationDate > DateTime.Now.Date))
+                    {
+                        var multipleKeyList = MultipleKeysRecordDefinitions[typeof(T)].ToList();
+                        MultipleKeysDefinitions[typeof(T)] = multipleKeyList;
+
+                        multipleKeyInfo = GetMultipleKeys();
+                        if (multipleKeyInfo != default)
+                        {
+                            return (T)multipleKeyInfo;
+                        }
+                    }
 
                     return default;
                 }
 
-                var multipleKeyInfo = MultipleKeysDefinitions[typeof(T)];
-                var key = multipleKeyInfo.Keys[multipleKeyInfo.CurrentKeysIndex];
+                multipleKeyInfo.ResidueDegree -= 1;
 
-                MultipleKeysDefinitions[typeof(T)].CurrentLocation += 1;
-
-                return (T)key;
+                return (T)multipleKeyInfo;
             }
 
         }
 
-        protected virtual Dictionary<Type, DefaultMultipleKeyInfo> InitializationMultipleKeysDefinitions()
+        protected virtual Dictionary<Type, List<MultipleKeyEntity>> InitializationMultipleKeysDefinitions()
         {
-            var data = new Dictionary<Type, List<IMultipleKeyEntity>>();
+            var result = new Dictionary<Type, List<MultipleKeyEntity>>();
             foreach (var key in Options.Keys)
             {
                 var keyName = key.GetType();
-                if (!data.ContainsKey(keyName))
+                if (!result.ContainsKey(keyName))
                 {
-                    data[keyName] = new List<IMultipleKeyEntity>();
+                    result[keyName] = new List<MultipleKeyEntity>();
                 }
-                data[keyName].Add(key);
-            }
-
-            var result = new Dictionary<Type, DefaultMultipleKeyInfo>();
-            foreach (var item in data.Keys)
-            {
-                if (!result.ContainsKey(item))
-                {
-                    result[item] = new DefaultMultipleKeyInfo(((MultipleKeyAttribute)item.GetType().GetCustomAttributes(false).FirstOrDefault(x => x.GetType().FullName == typeof(MultipleKeyAttribute).FullName)).Maximum); 
-                }
-                result[item].Keys = data[item];
+                result[keyName].Add(key);
             }
             return result;
         }

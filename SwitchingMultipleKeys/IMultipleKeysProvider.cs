@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SwitchingMultipleKeys
 {
-    public interface IMultipleKeysProvider<T> where T : IMultipleKeyEntity
+    public interface IMultipleKeysProvider<T> where T : MultipleKeyEntity
     {
         T GetMultipleKeys();
     }

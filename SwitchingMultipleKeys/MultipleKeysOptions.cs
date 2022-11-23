@@ -8,21 +8,21 @@ namespace SwitchingMultipleKeys
 {
     public class MultipleKeysOptions {
 
-        public List<IMultipleKeyEntity> Keys { get; }
+        public List<MultipleKeyEntity> Keys { get; } 
 
         public MultipleKeysOptions()
         {
-            Keys = new List<IMultipleKeyEntity>();
+            Keys = new List<MultipleKeyEntity>();
         }
     }
-
 
     public enum LifeCycle
     {
         Day, 
-        Week, 
+        //Week, 
         Month, 
-        Year
+        Year,
+        NotRepeat
     }
 
 }
