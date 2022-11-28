@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 
 namespace SwitchingMultipleKeys.SqlServer
 {
@@ -20,7 +19,7 @@ namespace SwitchingMultipleKeys.SqlServer
         {
             lock (objLock)
             {
-                var multipleKeyInfo =  _context.MultipleKeyInfo.Where(x =>  x.KeyName == typeof(T).Name && x.StartDate.Date == DateTime.Now.Date && x.ResidueDegree > 0).OrderBy(x => x.ResidueDegree).FirstOrDefault();
+                var multipleKeyInfo =  _context.MultipleKeyInfo.Where(x =>  x.KeyName == typeof(T).Name && x.StartDate <= DateTime.Now && (x.ExpirationDate > DateTime.Now || x.ExpirationDate == null) && x.ResidueDegree > 0).OrderBy(x => x.ResidueDegree).FirstOrDefault();
 
                 if (multipleKeyInfo == null)
                 {
@@ -38,18 +37,29 @@ namespace SwitchingMultipleKeys.SqlServer
 
         public void TimingUpdateMultipleKeys()
         {
-            
-            foreach (var value in _context.MultipleKeyInfo.ToList())
+            lock (objLock)
             {
-                //if (value.ExpirationDate > DateTime.Now && !(value.ExpirationDate > DateTime.Now.AddHours(24)))
-                //{
-                //    var data = (MultipleKeyEntity)value.Clone();
-                //    data.UpdateLifeCycle(DateTime.Today.AddDays(1), value.LifeCycle);
-                //    MultipleKeysDefinitions[keysDefinition.Key].Add(data);
+                var multipleKeys = _context.MultipleKeyInfo
+                    .Where(x => x.StartDate <= DateTime.Now && x.ExpirationDate > DateTime.Now).ToList();
 
-                //}
+                foreach (var value in multipleKeys)
+                {
+                    if (value.ExpirationDate > DateTime.Now && value.ExpirationDate < DateTime.Now.AddHours(24))
+                    {
+                        var data = (MultipleKeyEntity)value.Data.Clone();
+                        data.UpdateLifeCycle(DateTime.Today.AddDays(1), value.LifeCycle);
+
+                        var info = new SqlServerMultipleKeyInfo(data.LifeCycle,data.Maximum)
+                        {
+                            KeyName = data.GetType().Name,
+                            Data = data,
+                        };
+                        info.UpdateLifeCycle(DateTime.Today.AddDays(1), value.LifeCycle);
+                        _context.MultipleKeyInfo.Add(info);
+                    }
+                }
+                _context.SaveChanges();
             }
-
         }
     }
 }
