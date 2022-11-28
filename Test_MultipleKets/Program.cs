@@ -1,6 +1,7 @@
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using SwitchingMultipleKeys;
+using SwitchingMultipleKeys.Default;
 using SwitchingMultipleKeys.SqlServer;
 using Test_MultipleKets;
 
@@ -19,11 +20,11 @@ builder.Services.AddRazorPages();
 //    options.Keys.Add(new SMZDMMultipleKeyEntity() { KeyId = "c", HttpUrl = "www.google.com" });
 //});
 
-builder.Services.AddDbContext<SqlServerMultipleKeyContext>(o => o.UseSqlServer(
-                @"Server=(localdb)\mssqllocaldb;Database=SwitchingMultipleKeys;Trusted_Connection=True"
-));
+//builder.Services.AddDbContext<SqlServerMultipleKeyContext>(o => o.UseSqlServer(
+//                @"Server=(localdb)\mssqllocaldb;Database=SwitchingMultipleKeys;Trusted_Connection=True"
+//));
 
-builder.Services.AddMultipleKeysSqlServer(options =>
+builder.Services.AddMultipleKeys(options =>
 {
     options.Keys.Add(new DiMultipleKeyEntity() { KeyId = "a", Password = "11111" });
     options.Keys.Add(new DiMultipleKeyEntity() { KeyId = "b", Password = "222222222222" });
@@ -52,7 +53,7 @@ app.UseAuthorization();
 
 app.MapRazorPages();
 
-app.UseMultipleKeysSqlServerSeedData();
+//app.UseMultipleKeysSqlServerSeedData();
 
 app.Run(async context =>
 {
@@ -63,7 +64,7 @@ app.Run(async context =>
         await Task.Run(() =>
         {
             var key = keyProviderDi.GetMultipleKeys();
-            Console.WriteLine(name + "--------------------" + (key != null ? ((DiMultipleKeyEntity)key).Password : "null111"));
+            Console.WriteLine(name + "--------------------" + (key != null ? key.Password : "null111"));
         });
     }
 
@@ -74,7 +75,7 @@ app.Run(async context =>
         await Task.Run(() =>
         {
             var key = keyProviderSMZDM.GetMultipleKeys();
-            Console.WriteLine(name + "--------------------" + (key != null ? ((SMZDMMultipleKeyEntity)key).HttpUrl : "Url11111111113213"));
+            Console.WriteLine(name + "--------------------" + (key != null ? key.HttpUrl : "Url11111111113213"));
         });
     }
 

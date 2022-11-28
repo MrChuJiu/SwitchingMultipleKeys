@@ -35,5 +35,10 @@ namespace SwitchingMultipleKeys.SqlServer
                 return (T)multipleKeyInfo.Data;
             }
         }
+
+        public void TimingUpdateMultipleKeys()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

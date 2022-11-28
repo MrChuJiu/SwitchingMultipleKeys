@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Runtime.InteropServices;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 
 namespace SwitchingMultipleKeys
 {
@@ -12,12 +6,6 @@ namespace SwitchingMultipleKeys
     {
         protected IDictionary<Type, List<MultipleKeyEntity>> MultipleKeysDefinitions =>  _lazyMultipleKeysDefinitions.Value;
         private readonly Lazy<Dictionary<Type, List<MultipleKeyEntity>>> _lazyMultipleKeysDefinitions;
-
-
-
-        protected IDictionary<Type, List<MultipleKeyEntity>> MultipleKeysRecordDefinitions =
-            new Dictionary<Type, List<MultipleKeyEntity>>();
-
 
         private static readonly object objLock = new object();
 
@@ -31,29 +19,16 @@ namespace SwitchingMultipleKeys
                 InitializationMultipleKeysDefinitions,
                 isThreadSafe: true
             );
-
         }
 
         public T GetMultipleKeys()
         {
             lock (objLock)
             {
-                var multipleKeyInfo = MultipleKeysDefinitions[typeof(T)].Where(x=> (x.ExpirationDate > DateTime.Now.Date || x.ExpirationDate == null) && x.ResidueDegree > 0).OrderBy(x=>x.ResidueDegree).ThenBy(x=>x.LifeCycle).FirstOrDefault();
+                var multipleKeyInfo = MultipleKeysDefinitions[typeof(T)].Where(x=> x.StartDate <= DateTime.Now && (x.ExpirationDate > DateTime.Now || x.ExpirationDate == null) && x.ResidueDegree > 0).OrderBy(x=>x.ResidueDegree).ThenBy(x=>x.LifeCycle).FirstOrDefault();
 
                 if (multipleKeyInfo == null)
                 {
-                    if (MultipleKeysDefinitions[typeof(T)].Any(x => x.ExpirationDate > DateTime.Now.Date))
-                    {
-                        var multipleKeyList = MultipleKeysRecordDefinitions[typeof(T)].ToList();
-                        MultipleKeysDefinitions[typeof(T)] = multipleKeyList;
-
-                        multipleKeyInfo = GetMultipleKeys();
-                        if (multipleKeyInfo != default)
-                        {
-                            return (T)multipleKeyInfo;
-                        }
-                    }
-
                     return default;
                 }
 
@@ -77,6 +52,23 @@ namespace SwitchingMultipleKeys
                 result[keyName].Add(key);
             }
             return result;
+        }
+
+        public void TimingUpdateMultipleKeys()
+        {
+            foreach (var keysDefinition in MultipleKeysDefinitions)
+            {
+                foreach (var value in keysDefinition.Value)
+                {
+                    if (value.ExpirationDate > DateTime.Now && !(value.ExpirationDate > DateTime.Now.AddHours(24)))
+                    {
+                        var data = (MultipleKeyEntity)value.Clone();
+                        data.UpdateLifeCycle(DateTime.Today.AddDays(1),value.LifeCycle);
+                        MultipleKeysDefinitions[keysDefinition.Key].Add(data);
+
+                    }
+                }
+            }
         }
     }
 }
