@@ -16,7 +16,7 @@ namespace SwitchingMultipleKeys
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
             // 86400000
-            return Task.Delay(1000, stoppingToken).ContinueWith(
+            return Task.Delay(86400000, stoppingToken).ContinueWith(
                 t =>
                 {
                     using var scope = _serviceProvider.CreateScope();

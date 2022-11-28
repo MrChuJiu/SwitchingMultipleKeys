@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace SwitchingMultipleKeys.SqlServer.Migrations
+namespace Test_MultipleKets.Migrations
 {
     public partial class Init : Migration
     {
