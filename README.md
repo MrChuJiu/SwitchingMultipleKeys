@@ -31,9 +31,9 @@ builder.Services.AddMultipleKeysSqlServer(options =>
     options.Keys.Add(new SMZDMMultipleKeyEntity(LifeCycle.Month) { KeyId = "b", HttpUrl = "www.baidu.com" });
     options.Keys.Add(new SMZDMMultipleKeyEntity(LifeCycle.Year) { KeyId = "c", HttpUrl = "www.google.com" });
 });
-```
 
-```cs
+
+
 app.UseMultipleKeysSqlServerSeedData();
 ```
 
