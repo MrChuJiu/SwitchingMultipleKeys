@@ -41,6 +41,7 @@
         public DateTime StartDate { get; set; }
         public object Clone()
         {
+            this.ResidueDegree = Maximum;
             return MemberwiseClone();
         }
     }

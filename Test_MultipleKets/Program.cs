@@ -11,28 +11,29 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 
 
-builder.Services.AddMultipleKeys(options =>
-{
-    options.Keys.Add(new DiMultipleKeyEntity(LifeCycle.Day) { KeyId = "a", Password = "11111"});
-    options.Keys.Add(new DiMultipleKeyEntity(LifeCycle.Month) { KeyId = "b", Password = "222222222222"});
-    options.Keys.Add(new DiMultipleKeyEntity(LifeCycle.Year) { KeyId = "c", Password = "33333333333333333333"});
-
-    options.Keys.Add(new SMZDMMultipleKeyEntity(LifeCycle.Month) { KeyId = "b", HttpUrl = "www.baidu.com"});
-    options.Keys.Add(new SMZDMMultipleKeyEntity(LifeCycle.Year) { KeyId = "c", HttpUrl = "www.google.com"});
-});
-
-//builder.Services.AddDbContext<SqlServerMultipleKeyContext>(o => o.UseSqlServer(
-//                @"Server=(localdb)\mssqllocaldb;Database=SwitchingMultipleKeys;Trusted_Connection=True"
-//));
-
-//builder.Services.AddMultipleKeysSqlServer(options =>
+//builder.Services.AddMultipleKeys(options =>
 //{
-//    options.Keys.Add(new DiMultipleKeyEntity() { KeyId = "a", Password = "11111" , LifeCycle = LifeCycle.Day});
-//    options.Keys.Add(new DiMultipleKeyEntity() { KeyId = "b", Password = "222222222222" , LifeCycle = LifeCycle.Month});
-//    options.Keys.Add(new DiMultipleKeyEntity() { KeyId = "c", Password = "33333333333333333333" , LifeCycle = LifeCycle.Year});
-//    options.Keys.Add(new SMZDMMultipleKeyEntity() { KeyId = "b", HttpUrl = "www.baidu.com" , LifeCycle = LifeCycle.Month});
-//    options.Keys.Add(new SMZDMMultipleKeyEntity() { KeyId = "c", HttpUrl = "www.google.com" , LifeCycle = LifeCycle.Year});
+//    options.Keys.Add(new DiMultipleKeyEntity(LifeCycle.Day) { KeyId = "a", Password = "11111"});
+//    options.Keys.Add(new DiMultipleKeyEntity(LifeCycle.Month) { KeyId = "b", Password = "222222222222"});
+//    options.Keys.Add(new DiMultipleKeyEntity(LifeCycle.Year) { KeyId = "c", Password = "33333333333333333333"});
+
+//    options.Keys.Add(new SMZDMMultipleKeyEntity(LifeCycle.Month) { KeyId = "b", HttpUrl = "www.baidu.com"});
+//    options.Keys.Add(new SMZDMMultipleKeyEntity(LifeCycle.Year) { KeyId = "c", HttpUrl = "www.google.com"});
 //});
+
+builder.Services.AddDbContext<SqlServerMultipleKeyContext>(o => o.UseSqlServer(
+                @"Server=(localdb)\mssqllocaldb;Database=SwitchingMultipleKeys;Trusted_Connection=True"
+));
+
+builder.Services.AddMultipleKeysSqlServer(options =>
+{
+    options.Keys.Add(new DiMultipleKeyEntity(LifeCycle.Day) { KeyId = "a", Password = "11111" });
+    options.Keys.Add(new DiMultipleKeyEntity(LifeCycle.Month) { KeyId = "b", Password = "222222222222" });
+    options.Keys.Add(new DiMultipleKeyEntity(LifeCycle.Year) { KeyId = "c", Password = "33333333333333333333" });
+
+    options.Keys.Add(new SMZDMMultipleKeyEntity(LifeCycle.Month) { KeyId = "b", HttpUrl = "www.baidu.com" });
+    options.Keys.Add(new SMZDMMultipleKeyEntity(LifeCycle.Year) { KeyId = "c", HttpUrl = "www.google.com" });
+});
 
 var app = builder.Build();
 
@@ -79,8 +80,6 @@ app.Run(async context =>
             Console.WriteLine(name + "--------------------" + (key != null ? key.HttpUrl : "Url11111111113213"));
         });
     }
-
-
 });
 
 app.Run();

@@ -20,7 +20,7 @@ namespace SwitchingMultipleKeys.SqlServer
         {
             lock (objLock)
             {
-                var multipleKeyInfo =  _context.MultipleKeyInfo.Where(x =>  x.KeyName == typeof(T).Name && x.CreateTime.Date == DateTime.Now.Date && x.ResidueDegree > 0).OrderBy(x => x.ResidueDegree).FirstOrDefault();
+                var multipleKeyInfo =  _context.MultipleKeyInfo.Where(x =>  x.KeyName == typeof(T).Name && x.StartDate.Date == DateTime.Now.Date && x.ResidueDegree > 0).OrderBy(x => x.ResidueDegree).FirstOrDefault();
 
                 if (multipleKeyInfo == null)
                 {
@@ -38,7 +38,18 @@ namespace SwitchingMultipleKeys.SqlServer
 
         public void TimingUpdateMultipleKeys()
         {
-            throw new NotImplementedException();
+            
+            foreach (var value in _context.MultipleKeyInfo.ToList())
+            {
+                //if (value.ExpirationDate > DateTime.Now && !(value.ExpirationDate > DateTime.Now.AddHours(24)))
+                //{
+                //    var data = (MultipleKeyEntity)value.Clone();
+                //    data.UpdateLifeCycle(DateTime.Today.AddDays(1), value.LifeCycle);
+                //    MultipleKeysDefinitions[keysDefinition.Key].Add(data);
+
+                //}
+            }
+
         }
     }
 }

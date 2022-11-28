@@ -1,14 +1,16 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace SwitchingMultipleKeys
 {
     public class MultipleKeysBackgroundService: BackgroundService
     {
-        private IMultipleKeysProvider<MultipleKeyEntity> multipleKeysProvider;
+   
+        private readonly IServiceProvider _serviceProvider;
 
-        public MultipleKeysBackgroundService(IMultipleKeysProvider<MultipleKeyEntity> multipleKeysProvider)
+        public MultipleKeysBackgroundService(IServiceProvider serviceProvider)
         {
-            this.multipleKeysProvider = multipleKeysProvider;
+            _serviceProvider = serviceProvider;
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -17,7 +19,10 @@ namespace SwitchingMultipleKeys
             return Task.Delay(1000, stoppingToken).ContinueWith(
                 t =>
                 {
-                    multipleKeysProvider.TimingUpdateMultipleKeys();
+                    using var scope = _serviceProvider.CreateScope();
+                    var multipleKeysProvider = scope.ServiceProvider.GetService<IMultipleKeysProvider<MultipleKeyEntity>>();
+                    multipleKeysProvider?.TimingUpdateMultipleKeys();
+
                     ExecuteAsync(stoppingToken);
                 }, stoppingToken);  
         }

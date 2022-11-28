@@ -12,6 +12,8 @@ namespace SwitchingMultipleKeys.SqlServer
         {
             services.AddScoped(typeof(IMultipleKeysProvider<>), typeof(SqlServerMultipleKeysProvider<>));
 
+            services.AddHostedService<MultipleKeysBackgroundService>();
+
             services.Configure(optionsAction);
 
             services.AddTransient<IMultipleKeySeedData,SqlServerMultipleKeySeedData>();
@@ -26,7 +28,7 @@ namespace SwitchingMultipleKeys.SqlServer
 
             var seedData= app.ApplicationServices.GetService<IMultipleKeySeedData>();
 
-            seedData.SeedAsync().Wait();
+            seedData?.SeedAsync().Wait();
             return app;
 
         }
