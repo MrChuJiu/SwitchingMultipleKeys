@@ -56,16 +56,21 @@ namespace SwitchingMultipleKeys
 
         public void TimingUpdateMultipleKeys()
         {
+            var multipleKeys = new Dictionary<Type, List<MultipleKeyEntity>>();
             foreach (var keysDefinition in MultipleKeysDefinitions)
+            {
+                multipleKeys[keysDefinition.Key] = keysDefinition.Value.Where(x=>  x.StartDate <= DateTime.Now && x.ExpirationDate > DateTime.Now).ToList();
+            }
+
+            foreach (var keysDefinition in multipleKeys)
             {
                 foreach (var value in keysDefinition.Value)
                 {
-                    if (value.ExpirationDate > DateTime.Now && !(value.ExpirationDate > DateTime.Now.AddHours(24)))
+                    if (value.ExpirationDate > DateTime.Now && value.ExpirationDate < DateTime.Now.AddHours(24))
                     {
                         var data = (MultipleKeyEntity)value.Clone();
                         data.UpdateLifeCycle(DateTime.Today.AddDays(1),value.LifeCycle);
                         MultipleKeysDefinitions[keysDefinition.Key].Add(data);
-
                     }
                 }
             }

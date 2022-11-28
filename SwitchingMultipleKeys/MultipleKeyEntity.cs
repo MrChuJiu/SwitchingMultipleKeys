@@ -2,12 +2,12 @@
 {
     public class MultipleKeyEntity: ICloneable
     {
-        public MultipleKeyEntity(LifeCycle lifeCycle = LifeCycle.Day, int maximum = 40)
+        public MultipleKeyEntity(LifeCycle lifeCycle, int maximum = 40)
         {
             this.LifeCycle = lifeCycle;
             this.Maximum = maximum;
             this.ResidueDegree = maximum;
-            this.UpdateLifeCycle(DateTime.Now.Date);
+            this.UpdateLifeCycle(DateTime.Now.Date, this.LifeCycle);
         }
 
         public void UpdateLifeCycle(DateTime startDate, LifeCycle lifeCycle = LifeCycle.Day)
