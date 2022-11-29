@@ -19,7 +19,8 @@ builder.Services.AddMultipleKeys(options =>
 ### SQLServer
 ```cs
 builder.Services.AddDbContext<SqlServerMultipleKeyContext>(o => o.UseSqlServer(
-                @"Server=(localdb)\mssqllocaldb;Database=SwitchingMultipleKeys;Trusted_Connection=True"
+                @"Server=(localdb)\mssqllocaldb;Database=SwitchingMultipleKeys;Trusted_Connection=True",
+                b => b.MigrationsAssembly("Test_MultipleKets")
 ));
 
 builder.Services.AddMultipleKeysSqlServer(options =>

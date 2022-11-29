@@ -13,16 +13,17 @@ builder.Services.AddRazorPages();
 
 //builder.Services.AddMultipleKeys(options =>
 //{
-//    options.Keys.Add(new DiMultipleKeyEntity(LifeCycle.Day) { KeyId = "a", Password = "11111"});
-//    options.Keys.Add(new DiMultipleKeyEntity(LifeCycle.Month) { KeyId = "b", Password = "222222222222"});
-//    options.Keys.Add(new DiMultipleKeyEntity(LifeCycle.Year) { KeyId = "c", Password = "33333333333333333333"});
+//    options.Keys.Add(new DiMultipleKeyEntity(LifeCycle.Day) { KeyId = "a", Password = "11111" });
+//    options.Keys.Add(new DiMultipleKeyEntity(LifeCycle.Month) { KeyId = "b", Password = "222222222222" });
+//    options.Keys.Add(new DiMultipleKeyEntity(LifeCycle.Year) { KeyId = "c", Password = "33333333333333333333" });
 
-//    options.Keys.Add(new SMZDMMultipleKeyEntity(LifeCycle.Month) { KeyId = "b", HttpUrl = "www.baidu.com"});
-//    options.Keys.Add(new SMZDMMultipleKeyEntity(LifeCycle.Year) { KeyId = "c", HttpUrl = "www.google.com"});
+//    options.Keys.Add(new SMZDMMultipleKeyEntity(LifeCycle.Month) { KeyId = "b", HttpUrl = "www.baidu.com" });
+//    options.Keys.Add(new SMZDMMultipleKeyEntity(LifeCycle.Year) { KeyId = "c", HttpUrl = "www.google.com" });
 //});
 
 builder.Services.AddDbContext<SqlServerMultipleKeyContext>(o => o.UseSqlServer(
-                @"Server=(localdb)\mssqllocaldb;Database=SwitchingMultipleKeys;Trusted_Connection=True"
+                @"Server=(localdb)\mssqllocaldb;Database=SwitchingMultipleKeys;Trusted_Connection=True",
+                b => b.MigrationsAssembly("Test_MultipleKets")
 ));
 
 builder.Services.AddMultipleKeysSqlServer(options =>

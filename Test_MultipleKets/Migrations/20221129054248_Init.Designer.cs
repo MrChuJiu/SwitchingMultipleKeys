@@ -12,7 +12,7 @@ using SwitchingMultipleKeys.SqlServer;
 namespace Test_MultipleKets.Migrations
 {
     [DbContext(typeof(SqlServerMultipleKeyContext))]
-    [Migration("20221128075015_Init")]
+    [Migration("20221129054248_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

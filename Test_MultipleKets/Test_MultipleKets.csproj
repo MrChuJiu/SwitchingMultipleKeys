@@ -15,11 +15,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\SwitchingMultipleKeys.SqlServer\SwitchingMultipleKeys.SqlServer.csproj" />
-    <ProjectReference Include="..\SwitchingMultipleKeys\SwitchingMultipleKeys.csproj" />
+    <PackageReference Include="SwitchingMultipleKeys.SqlServer" Version="1.0.0" />
   </ItemGroup>
 
 </Project>

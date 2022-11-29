@@ -1,10 +1,10 @@
 ﻿using Microsoft.Extensions.Options;
 
-namespace SwitchingMultipleKeys
+namespace SwitchingMultipleKeys.Default
 {
     public class DefaultMultipleKeysProvider<T> : IMultipleKeysProvider<T> where T : MultipleKeyEntity
     {
-        protected IDictionary<Type, List<MultipleKeyEntity>> MultipleKeysDefinitions =>  _lazyMultipleKeysDefinitions.Value;
+        protected IDictionary<Type, List<MultipleKeyEntity>> MultipleKeysDefinitions => _lazyMultipleKeysDefinitions.Value;
         private readonly Lazy<Dictionary<Type, List<MultipleKeyEntity>>> _lazyMultipleKeysDefinitions;
 
         private static readonly object objLock = new object();
@@ -25,7 +25,7 @@ namespace SwitchingMultipleKeys
         {
             lock (objLock)
             {
-                var multipleKeyInfo = MultipleKeysDefinitions[typeof(T)].Where(x=> x.StartDate <= DateTime.Now && (x.ExpirationDate > DateTime.Now || x.ExpirationDate == null) && x.ResidueDegree > 0).OrderBy(x=>x.ResidueDegree).ThenBy(x=>x.LifeCycle).FirstOrDefault();
+                var multipleKeyInfo = MultipleKeysDefinitions[typeof(T)].Where(x => x.StartDate <= DateTime.Now && (x.ExpirationDate > DateTime.Now || x.ExpirationDate == null) && x.ResidueDegree > 0).OrderBy(x => x.ResidueDegree).ThenBy(x => x.LifeCycle).FirstOrDefault();
 
                 if (multipleKeyInfo == null)
                 {
